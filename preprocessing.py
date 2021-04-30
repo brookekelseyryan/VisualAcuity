@@ -59,7 +59,7 @@ def is_med_or_high_distortion_file(file_name, path):
 
 
 def is_icon(file):
-    return "-" not in file and file.endswith(".png")
+    return file.count("-") < 2 and file.endswith(".png")
 
 
 def copy_to_testing_dir(rel_path, abs_path):

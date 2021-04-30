@@ -45,12 +45,12 @@ def make_directories(dest_path):
 # Must be from a L folder and also be in the low distortion filenames
 def is_low_distortion_file(file_name, path):
     size = path.split("/")[-2]
-    return file_name in low_distortion_filenames and size == "L"
+    return file_name in low_distortion_filenames and "L" in size
 
 
 def is_med_or_high_distortion_file(file_name, path):
     size = path.split("/")[-2]
-    if size == "M" or size == "S":
+    if "M" in size or "S" in size:
         return True
     elif file_name not in low_distortion_filenames:
         return True
@@ -76,9 +76,7 @@ def copy_to_training_dir(rel_path, abs_path):
 
 def sort():
     for root, dirs, files in os.walk(data_root):
-
         for file in files:
-
             if file.endswith(".png") or file.endswith(".tif"):
 
                 file_name = file.title().split(".")[0]

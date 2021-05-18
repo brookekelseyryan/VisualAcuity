@@ -1,0 +1,41 @@
+#################
+# WandB Params #
+#################
+project:
+  desc: A project is a set of experiments you can compare together. Each project gets a dedicated dashboard page, and you can easily turn on and off different groups of runs to compare different model versions.
+  value: "Visual_Acuity"
+
+
+
+###################
+# Training Params #
+###################
+epochs:
+  desc: Number of epochs to train over
+  value: 1
+batch_size:
+  desc: Size of each mini-batch
+  value: 32
+optimizer:
+  value: "adam"
+weights:
+  value: "imagenet"
+metrics:
+  value: "accuracy"
+loss:
+  value: "categorical_crossentropy"
+
+
+
+##################
+# Dataset Params #
+##################
+img_height:
+  desc: Height of images
+  value: 400
+img_width:
+  desc: Width of images
+  value: 400
+color_channel:
+  desc: RGB
+  value: 3

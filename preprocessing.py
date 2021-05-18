@@ -41,7 +41,7 @@ remote_root = "/baldig/bioprojects2/VisualAcuity/"
 
 training_path = "/Users/brookeryan/Developer/Baldi Lab/Visual-Acuity/data/training/"
 testing_path = "/Users/brookeryan/Developer/Baldi Lab/Visual-Acuity/data/testing/"
-data_root = "/Users/brookeryan/Developer/Baldi Lab/Visual-Acuity/Multiple Choice Test 2/"
+data_root = "/Users/brookeryan/Developer/Baldi Lab/Visual-Acuity/MultipleChoiceTest2/"
 
 x_train = np.zeros((2862, 400, 400, 3))
 x_test = np.zeros((13876, 400, 400, 3))

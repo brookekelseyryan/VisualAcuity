@@ -1,0 +1,6 @@
+'img_num', 'cake', 'car', 'duck', 'hand', 'horse', 'house', 'panda', 'phone', 'tree', 'C', 'D', 'H', 'K', 'N', 'O', 'R', 'S', 'V', 'Z', 'flat-line', 'flat-square', 'frown-line', 'frown-square', 'smile-line', 'smile-square', '+blank', '+circle', '+diamond', '+square', 'x-blank', 'x-circle', 'x-diamond', 'x-square'
+
+
+
+
+'C-0', 'C-45', 'C-90' 'C-135' 'C-180', 'C-225', 'C-270', 'C-315', 'E-0', 'E-90', 'E-180', 'E-270',

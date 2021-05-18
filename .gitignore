@@ -1,2 +1,7 @@
 
 .DS_Store
+/data/
+/images/
+/.ipynb_checkpoints/
+/MultipleChoiceTest2/
+/Teller/

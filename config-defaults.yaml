@@ -30,12 +30,12 @@ loss:
 ##################
 # Dataset Params #
 ##################
-img_height:
+image_height:
   desc: Height of images
   value: 400
-img_width:
+image_width:
   desc: Width of images
   value: 400
-color_channel:
+color_channels:
   desc: RGB
   value: 3

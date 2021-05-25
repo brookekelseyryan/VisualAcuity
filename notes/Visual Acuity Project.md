@@ -79,3 +79,14 @@ Tiers of experiments:
 
 a month a 
 
+
+# Notes, Week of May 17
+what if more training data was taken from like Mnist or something like that?
+is there a dataset for like non-handwritten stuff?
+idk what results he's going for but there could be a correlation between literacy and vision tests
+maybe to frame the question it'd be something like, is there a correlation between symbol recognition and vision tests
+idk what people he's testing the app on
+personally I feel like the symbol recognition, at least for humans, is harder
+idk what kind of standardized like, training there could be for that
+symbols are so ingrained in your head
+maybe like facial visual acuity tests? idk

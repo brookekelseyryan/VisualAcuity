@@ -123,7 +123,7 @@ def sort():
 
                 elif is_icon(file):
                     pass
-                    # copy_to_training_dir(rel_path, abs_path)
+                    copy_to_training_dir(rel_path, abs_path, train)
 
                 elif is_med_or_high_distortion_file(file_name, rel_path):
                     test += 1

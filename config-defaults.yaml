@@ -30,7 +30,7 @@ loss:
 ##################
 # Dataset Params #
 ##################
-image_height:
+image_dms:
   desc: Height of images
   value: 400
 image_width:

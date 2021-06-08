@@ -7,10 +7,13 @@ from keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 from wandb.keras import WandbCallback
+import numpy as np
 
 import wandb
 
 # 64 classes of optotypes. Should correspond to the folder names under images/testing and images/training
+from confusion_wanb import WandbClassificationCallback
+
 labels = ["+blank", "+circle", "+diamond", "+square", "2", "3", "5", "6", "8", "9", "apple", "bird", "C", "C-0", "C-45",
           "C-90", "C-135", "C-180", "C-225", "C-270", "C-315", "cake", "car", "circle", "cow", "cup", "D",
           "duck", "E", "E-0", "E-90", "E-180", "E-270", "F", "flat-line", "flat-square",
@@ -64,11 +67,11 @@ def create_datasets_test_train():
     """
     training_set = image_dataset_from_directory("./images/training/",
                                                 shuffle=True,
-                                                batch_size=32,
+                                                batch_size=30,
                                                 image_size=(wandb.config.image_dms, wandb.config.image_dms))
     testing_set = image_dataset_from_directory("./images/testing/",
                                                shuffle=True,
-                                               batch_size=32,
+                                               batch_size=30,
                                                image_size=(wandb.config.image_dms, wandb.config.image_dms))
     return training_set, testing_set
 
@@ -82,28 +85,29 @@ def create_datasets(validation_split=0.2):
     """
     training_set = image_dataset_from_directory("./images/training/",
                                                 shuffle=True,
-                                                batch_size=32,
+                                                batch_size=30,
                                                 validation_split=validation_split,
                                                 subset="training",
                                                 seed=0,
                                                 image_size=(wandb.config.image_dms, wandb.config.image_dms))
     validation_set = image_dataset_from_directory("./images/training/",
                                                   shuffle=False,
-                                                  batch_size=32,
+                                                  batch_size=30,
                                                   validation_split=validation_split,
                                                   subset="validation",
                                                   seed=0,
                                                   image_size=(wandb.config.image_dms, wandb.config.image_dms))
     testing_set = image_dataset_from_directory("./images/testing/",
                                                shuffle=True,
-                                               batch_size=32,
+                                               batch_size=30,
                                                image_size=(wandb.config.image_dms, wandb.config.image_dms))
     return training_set, validation_set, testing_set
 
 
 # Just trying to replicate the same thing that I had last time
 def create_model():
-    vgg = VGG16(include_top=False, weights='imagenet', input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
+    vgg = VGG16(include_top=False, weights='imagenet',
+                input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     vgg.trainable = False
     inputs = tf.keras.Input(shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     x = preprocess_input(inputs)
@@ -136,7 +140,8 @@ def extract_features_2(input_shape=(400, 400, 3),
 
     # Pretrained convolutional layers are loaded using the Imagenet weights.
     # Include_top is set to False, in order to exclude the model's fully-connected layers.
-    vgg = VGG16(include_top=False, weights='imagenet', input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
+    vgg = VGG16(include_top=False, weights='imagenet',
+                input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     vgg.trainable = False
     inputs = tf.keras.Input(shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     x = preprocess_input(inputs)
@@ -186,7 +191,8 @@ def extract_features():
     """
     training_set, testing_set = create_datasets_test_train()
 
-    vgg = VGG16(include_top=False, weights='imagenet', input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
+    vgg = VGG16(include_top=False, weights='imagenet',
+                input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
 
     # Extracting features from the training dataset
     features_train = vgg.predict(training_set)
@@ -236,7 +242,8 @@ def train():
 
     """
     training_set, validation_set, testing_set = create_datasets()
-    vgg = VGG16(include_top=False, weights='imagenet', input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
+    vgg = VGG16(include_top=False, weights='imagenet',
+                input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     vgg.trainable = False
     inputs = tf.keras.Input(shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     x = preprocess_input(inputs)
@@ -258,7 +265,8 @@ def create_base_model():
     Creates base of VGG16 transfer learning model with imagenet weights and input shape of the same size in config.
     :return: VGG16 model
     """
-    vgg = VGG16(include_top=False, weights="imagenet", input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
+    vgg = VGG16(include_top=False, weights="imagenet",
+                input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
     vgg.trainable = False
     return vgg
 
@@ -269,8 +277,8 @@ def runner():
     """
 
     # Uncomment if on arcus servers
-    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
     training_set, validation_set, testing_set = create_datasets()
 
@@ -282,20 +290,39 @@ def runner():
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
     x = tf.keras.layers.Dropout(0.2)(x)
 
-    outputs = tf.keras.layers.Dense(1, activation=tf.keras.activations.softmax)(x)
+    outputs = tf.keras.layers.Dense(64, activation=tf.keras.activations.softmax)(x)
 
     model = tf.keras.Model(inputs, outputs)
     model.summary()
 
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.fit(training_set, epochs=25, verbose=2, validation_data=validation_set,
-              callbacks=[WandbCallback(data_type="image", labels=labels), TensorBoard(log_dir=wandb.run.dir)])
+              callbacks=[
+                  WandbClassificationCallback(input_type="image", log_confusion_matrix=True,
+                                              confusion_examples=3, confusion_classes=5,
+                                              validation_data=validation_set, labels=labels),
+                  WandbCallback(data_type="image", labels=labels),
+                  TensorBoard(log_dir=wandb.run.dir)])
+
     model.evaluate(testing_set, verbose=1)
+
+    # Confusion matrix
+    predictions = np.array([])
+    L = np.array([])
+    for x, y in testing_set:
+        predictions = np.concatenate([predictions, np.argmax(model.predict(x), axis=-1)])
+        L = np.concatenate([L, np.argmax(y.numpy(), axis=-1)])
+
+    print(predictions.shape)
+    print(L.shape)
+    print(predictions)
+    print(L)
+
+    wandb.log({"my_conf_mat_id": wandb.plot.confusion_matrix(
+        preds=predictions, y_true=L,
+        class_names=labels)})
 
 
 if __name__ == '__main__':
     init_wandb(sys.argv)
     runner()
-
-
-

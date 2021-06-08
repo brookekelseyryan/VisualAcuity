@@ -12,7 +12,7 @@ import numpy as np
 import wandb
 
 # 64 classes of optotypes. Should correspond to the folder names under images/testing and images/training
-from confusion_wanb import WandbClassificationCallback
+from confusion_wandb import WandbClassificationCallback
 
 labels = ["+blank", "+circle", "+diamond", "+square", "2", "3", "5", "6", "8", "9", "apple", "bird", "C", "C-0", "C-45",
           "C-90", "C-135", "C-180", "C-225", "C-270", "C-315", "cake", "car", "circle", "cow", "cup", "D",

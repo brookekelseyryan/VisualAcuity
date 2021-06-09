@@ -22,7 +22,12 @@ class Dataset:
 
         self.size = 0
         self.get_size_of_dataset()
-        print("SIZE = ",self.size)
+
+        self.distortions = np.zeros(shape=(self.size,), dtype=object)  # Low or High
+        self.sizes = np.zeros(shape=(self.size,), dtype=object)  # S, M, or L
+        self.angles = np.zeros(shape=(self.size,), dtype=np.int)  # 0, 45, 90, or 135
+        self.optotypes = np.zeros(shape=(self.size,), dtype=object)  # cake, C, D, duck, etc.
+        self.images = np.zeros((self.size, self.height, self.width, 3), dtype=np.float64)
 
     def get_size_of_dataset(self):
         for root, dirs, files in os.walk(self.path):
@@ -32,14 +37,10 @@ class Dataset:
         print(self.name, "Dataset contains", self.size, "images")
 
     def process_labels(self):
-        # Images
-        self.images = np.zeros((self.size, self.height, self.width, 3), dtype=np.float64)
 
-        # Labels for each image
-        self.optotypes = np.zeros(shape=(self.size,), dtype=object)  # cake, C, D, duck, etc.
-        self.angles = np.zeros(shape=(self.size,), dtype=np.int)  # 0, 45, 90, or 135
-        self.sizes = np.zeros(shape=(self.size,), dtype=object)  # S, M, or L
-        self.distortions = np.zeros(shape=(self.size,), dtype=object)  # Low or High
+        print("####################")
+        print("Processing labels...")
+        print("####################")
 
         i = 0
         for root, dirs, files in os.walk(self.path):

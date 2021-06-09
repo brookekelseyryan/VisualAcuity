@@ -1,7 +1,4 @@
 import os
-import shutil
-
-from constants import IMAGES_PATH, TRAINING_PATH, TESTING_PATH
 
 
 def make_dir(dest_path):

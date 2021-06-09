@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from preprocessing.constants import low_distortion_filenames, high_distortion_filenames, TRAINING_IMAGE_SIZES, TESTING_IMAGE_SIZES
+from constants import low_distortion_filenames, high_distortion_filenames, TRAINING_IMAGE_SIZES, TESTING_IMAGE_SIZES
 
 
 def is_low_distortion_file(file_title):

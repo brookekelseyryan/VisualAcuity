@@ -52,6 +52,16 @@ high_distortion_filenames = ["2-6-0",
                              "6-6-90",
                              "6-6-135"]
 
+optotypes = ['+blank', '+circle', '+diamond', '+square', '2', '3', '5', '6', '8', '9', 'C', 'C-0',
+           'C-135', 'C-180', 'C-225', 'C-270', 'C-315', 'C-45', 'C-90', 'D', 'E', 'E-0',
+           'E-180', 'E-270', 'E-90', 'F', 'H', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'T', 'V', 'Z',
+           'apple', 'bird', 'cake', 'car', 'circle', 'cow', 'cup', 'duck', 'flat-line',
+           'flat-square', 'frown-line', 'frown-square', 'hand', 'horse', 'house', 'panda',
+           'phone', 'smile-line', 'smile-square', 'square', 'star', 'train', 'tree',
+           'x-blank', 'x-circle', 'x-diamond', 'x-square']
+
+angles = [0, 45, 90, 135]
+
 imbalanced_classes = ["+blank", "+circle", "+diamond", "+square", "2", "3", "5", "6", "8", "9", "apple", "bird", "cake",
                       "car", "circle", "cow", "cup", "D",
                       "duck", "F", "flat-line", "flat-square",

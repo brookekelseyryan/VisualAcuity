@@ -61,9 +61,9 @@ def log_model_params(model, wandb_config, args):
 
 def create_datasets_test_train():
     """
-    Generates two `tf.data.Dataset` from image files in the project.
+    Generates two `tf.multiplechoice_processed_data.Dataset` from image files in the project.
     NOTE: images must be put under project root in directory images/testing and images/training
-    :return: Two `tf.data.Dataset` objects, one for testing and one for training.
+    :return: Two `tf.multiplechoice_processed_data.Dataset` objects, one for testing and one for training.
     """
     training_set = image_dataset_from_directory("./images/training/",
                                                 shuffle=True,
@@ -78,10 +78,10 @@ def create_datasets_test_train():
 
 def create_datasets(validation_split=0.2):
     """
-    Generates three `tf.data.Dataset` from image files in the project.
-    @:param validation_split: float between 0 and 1, fraction of data to reserve for validation.
+    Generates three `tf.multiplechoice_processed_data.Dataset` from image files in the project.
+    @:param validation_split: float between 0 and 1, fraction of multiplechoice_processed_data to reserve for validation.
     NOTE: images must be put under project root in directory images/testing and images/training.
-    :return: Three `tf.data.Dataset` objects, testing, training, and validation.
+    :return: Three `tf.multiplechoice_processed_data.Dataset` objects, testing, training, and validation.
     """
     training_set = image_dataset_from_directory("./images/training/",
                                                 shuffle=True,
@@ -194,10 +194,10 @@ def extract_features():
     vgg = VGG16(include_top=False, weights='imagenet',
                 input_shape=(wandb.config.image_dms, wandb.config.image_dms, wandb.config.color_channels))
 
-    # Extracting features from the training dataset
+    # Extracting features from the training data
     features_train = vgg.predict(training_set)
 
-    # Extracting features from the testing dataset
+    # Extracting features from the testing data
     features_test = vgg.predict(testing_set)
 
     # Flattening the layers to conform to input
@@ -276,10 +276,6 @@ def runner():
     Essentially the main function. Feel free to change as you see fit.
     """
 
-    # Uncomment if on arcus servers
-    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = "2"
-
     training_set, validation_set, testing_set = create_datasets()
 
     base_model = create_base_model()
@@ -323,6 +319,16 @@ def runner():
         class_names=labels)})
 
 
+def test_tensorflow_datasets():
+    training_set, validation_set, testing_set = create_datasets()
+    print("training set shape: ", training_set)
+
+
 if __name__ == '__main__':
+    # Uncomment if on arcus servers
+    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+
     init_wandb(sys.argv)
-    runner()
+
+    test_tensorflow_datasets()

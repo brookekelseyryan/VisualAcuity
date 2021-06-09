@@ -113,7 +113,7 @@ def log_size_of_dirs():
 
 def process():
     """
-    Processes images from MultipleChoice file to images/ where they will be used as a dataset.
+    Processes images from MultipleChoice file to images/ where they will be used as a data.
     """
     for root, dirs, files in os.walk(DATA_ROOT):
         for file in files:
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     clear_previous_dirs()
 
     print("#################################")
-    print("Beginning data processing...")
+    print("Beginning multiplechoice_processed_data processing...")
     print("#################################\n")
 
     process()

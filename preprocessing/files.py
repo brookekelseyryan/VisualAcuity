@@ -1,34 +1,29 @@
 import os
 import numpy as np
 
-from constants import low_distortion_filenames, high_distortion_filenames, TRAINING_IMAGE_SIZES, TESTING_IMAGE_SIZES
+from preprocessing.constants import low_distortion_filenames, high_distortion_filenames, TRAINING_IMAGE_SIZES, TESTING_IMAGE_SIZES
 
 
-def is_low_distortion_file(file_name, path):
+def is_low_distortion_file(file_title):
     """
     Must be from a L folder and also be in the low distortion filenames
-    :param file_name: File name without extension
+    :param file_name: File title
     :param path: Used to get the size of the image from the parent directory, S, M, L
     :return: Boolean, True if it is a low distortion file
     """
-    size = path.split("/")[-2]
-    return file_name in low_distortion_filenames and "L" in size
+    file_name = extract_file_name(file_title).split("_")[0]
+    return file_name in low_distortion_filenames
 
 
-def is_high_distortion_file(file_name, path):
+def is_high_distortion_file(file_title):
     """
     Must be from a M or S folder, or L folder that isn't already a low distortion filename
-    :param file_name: File name without extension
+    :param file_name: File title
     :param path: Used to get the size of the image from the parent directory, S, M, L
     :return: Boolean, True if it is a medium or high distortion file
     """
-    size = extract_size(path)
-    if "M" in size or "S" in size:
-        return True
-    elif file_name in high_distortion_filenames:
-        return True
-    else:
-        return False
+    file_name = extract_file_name(file_title).split("_")[0]
+    return file_name in high_distortion_filenames
 
 
 def is_icon(file):

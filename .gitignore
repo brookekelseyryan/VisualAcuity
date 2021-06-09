@@ -1,9 +1,16 @@
 
 .DS_Store
-/data/
+/multiplechoice_processed_data/
 /images/
 /.ipynb_checkpoints/
 /MultipleChoiceTest2/
 /Teller/
 
 .idea/
+
+preprocessing/__pycache__/
+
+__pycache__/
+
+wandb/
+/multiplechoice_processed_data/

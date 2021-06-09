@@ -8,5 +8,4 @@ rsync -vr \
 --exclude .git \
 --exclude README.md \
 --exclude data/* \
---exclude images/* \
 /Users/brookeryan/Developer/BaldiLab/Visual-Acuity/ brooker@arcus-17.ics.uci.edu:/home/brooker/VisualAcuity/

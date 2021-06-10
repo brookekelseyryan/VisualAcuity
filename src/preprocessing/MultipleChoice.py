@@ -7,24 +7,24 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing.image import save_img
 
-from constants import *
-from files import extract_file_name, extract_size, is_icon, extract_optotype
-from images import augment
-from utils import make_dir
+import constants as const
+import files as f
+import images as imgs
+import utils
 
 
 def is_training_image(path, title):
     """
     Large images with low distortion levels are training images.
     """
-    size = extract_size(path)
-    filename = extract_file_name(title)
+    size = f.extract_size(path)
+    filename = f.extract_file_name(title)
 
-    if size in TESTING_IMAGE_SIZES:
+    if size in const.TESTING_IMAGE_SIZES:
         return False
-    elif size in TRAINING_IMAGE_SIZES and filename in low_distortion_filenames:
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.low_distortion_filenames:
         return True
-    elif size in TRAINING_IMAGE_SIZES and filename in high_distortion_filenames:
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.high_distortion_filenames:
         return False
     else:
         raise Exception("Image cannot be classified as testing or training image:", path, "filename:", filename,
@@ -35,14 +35,14 @@ def is_testing_image(path, title):
     """
     Small or Medium image, or a Large image with high distortion level.
     """
-    size = extract_size(path)
-    filename = extract_file_name(title)
+    size = f.extract_size(path)
+    filename = f.extract_file_name(title)
 
-    if size in TESTING_IMAGE_SIZES:
+    if size in const.TESTING_IMAGE_SIZES:
         return True
-    elif size in TRAINING_IMAGE_SIZES and filename in low_distortion_filenames:
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.low_distortion_filenames:
         return False
-    elif size in TRAINING_IMAGE_SIZES and filename in high_distortion_filenames:
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.high_distortion_filenames:
         return True
     else:
         raise Exception("Image cannot be classified as testing or training image:", path, "filename:", filename,
@@ -51,26 +51,27 @@ def is_testing_image(path, title):
 
 def copy_to_dir(abs_path, file_title, training, file_format='.png', data_augmentation=True):
     if training:
-        path = TRAINING_PATH
+        path = const.TRAINING_PATH
     else:
-        path = TESTING_PATH
+        path = const.TESTING_PATH
 
-    image = cv2.cvtColor(cv2.resize(cv2.imread(abs_path), (H, W)), cv2.COLOR_BGR2RGB)
+    image = cv2.cvtColor(cv2.resize(cv2.imread(abs_path), (const.H, const.W)), cv2.COLOR_BGR2RGB)
     image_array = np.asarray(image, dtype=np.float64) / 255
 
-    optotype = extract_optotype(abs_path)
-    size = extract_size(abs_path)
+    optotype = f.extract_optotype(abs_path)
+    acuity = f.extract_acuity(abs_path)
+    size = f.extract_size(abs_path)
 
-    dest_dir = os.path.join(path, optotype + "/")
-    make_dir(dest_dir)
+    dest_dir = os.path.join(path, acuity + "_" + optotype + "/")        # example: /images/testing/SSa_C or /images/testing/SSl_C
+    utils.make_dir(dest_dir)
 
-    file_name = extract_file_name(file_title) + "_" + size
+    file_name = f.extract_file_name(file_title) + "_" + size
     images = {file_name: image_array}
 
     # Data Augmentation
     if data_augmentation:
-        if training and optotype in imbalanced_classes:
-            images.update(augment(PIL.Image.open(abs_path), file_name))
+        if training and optotype in const.imbalanced_classes:
+            images.update(imgs.augment(PIL.Image.open(abs_path), file_name))
 
     for title, img in images.items():
         # Saves an image stored as a Numpy array to a path or file object.
@@ -83,21 +84,21 @@ def clear_previous_dirs():
     print("#################################")
     print("Clearing previous directories...")
     print("#################################\n")
-    shutil.rmtree(IMAGES_PATH)
+    shutil.rmtree(const.IMAGES_PATH)
 
-    for path in [IMAGES_PATH, TRAINING_PATH, TESTING_PATH]:
-        make_dir(path)
+    for path in [const.IMAGES_PATH, const.TRAINING_PATH, const.TESTING_PATH]:
+        utils.make_dir(path)
 
     print("#################################")
     print("Assert directories exist...")
     print("#################################\n")
-    for path in [IMAGES_PATH, TRAINING_PATH, TESTING_PATH]:
+    for path in [const.IMAGES_PATH, const.TRAINING_PATH, const.TESTING_PATH]:
         assert os.path.exists(path)
         print(path, "exists.")
 
-    assert len(os.listdir(IMAGES_PATH)) == 2
-    assert len(os.listdir(TRAINING_PATH)) == 0
-    assert len(os.listdir(TESTING_PATH)) == 0
+    assert len(os.listdir(const.IMAGES_PATH)) == 2
+    assert len(os.listdir(const.TRAINING_PATH)) == 0
+    assert len(os.listdir(const.TESTING_PATH)) == 0
     print("\nDirectories empty.")
 
 
@@ -105,8 +106,8 @@ def log_size_of_dirs():
     print("#################################")
     print("Size of directories")
     print("#################################\n")
-    train_size = sum([len(files) for r, d, files in os.walk(TRAINING_PATH)])
-    test_size = sum([len(files) for r, d, files in os.walk(TESTING_PATH)])
+    train_size = sum([len(files) for r, d, files in os.walk(const.TRAINING_PATH)])
+    test_size = sum([len(files) for r, d, files in os.walk(const.TESTING_PATH)])
     print("Training size = ", train_size)
     print("Testing size = ", test_size)
 
@@ -115,12 +116,12 @@ def process():
     """
     Processes images from MultipleChoice file to images/ where they will be used as a data.
     """
-    for root, dirs, files in os.walk(DATA_ROOT):
+    for root, dirs, files in os.walk(const.DATA_ROOT):
         for file in files:
             if file.endswith(".png") or file.endswith(".tif"):
                 abs_path = os.path.join(root, file)
 
-                if is_icon(file):
+                if f.is_icon(file):
                     # Right now, just don't do anything for icons
                     pass
 
@@ -139,8 +140,8 @@ def process():
 ########
 if __name__ == '__main__':
     print("Current directory: ", os.getcwd())
-    print("Data root: ", DATA_ROOT)
-    print("Project root: ", PROJECT_ROOT, "\n")
+    print("Data root: ", const.DATA_ROOT)
+    print("Project root: ", const.PROJECT_ROOT, "\n")
 
     clear_previous_dirs()
 

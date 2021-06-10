@@ -1,7 +1,6 @@
 import os
 import numpy as np
-
-from constants import low_distortion_filenames, high_distortion_filenames, TRAINING_IMAGE_SIZES, TESTING_IMAGE_SIZES
+from preprocessing import constants as const
 
 
 def is_low_distortion_file(file_title):
@@ -12,7 +11,7 @@ def is_low_distortion_file(file_title):
     :return: Boolean, True if it is a low distortion file
     """
     file_name = extract_file_name(file_title).split("_")[0]
-    return file_name in low_distortion_filenames
+    return file_name in const.low_distortion_filenames
 
 
 def is_high_distortion_file(file_title):
@@ -23,7 +22,7 @@ def is_high_distortion_file(file_title):
     :return: Boolean, True if it is a medium or high distortion file
     """
     file_name = extract_file_name(file_title).split("_")[0]
-    return file_name in high_distortion_filenames
+    return file_name in const.high_distortion_filenames
 
 
 def is_icon(file):
@@ -45,15 +44,26 @@ def extract_optotype(path):
     return optotype
 
 
-def extract_angle(file_title):
+def extract_acuity(path):
     """
-    Extracts the angle of rotation from the file name.
+    Extracts the acuity from the path of the image
+    :param path: Path of the image, must contain up to at least the great-grandparent
+    :return: Acuity: ETDRS, HOTV, SSa, etc.
+    """
+    acuity = path.split("/")[-4]
+    assert acuity in const.acuities, "Unknown acuity {a}".format(a=acuity)
+    return acuity
+
+
+def extract_axis(file_title):
+    """
+    Extracts the axis from the file name.
     :param file_name: Name of file with extension.
     :return: Angle of rotation, will be either 0, 45, 90 or 135.
     """
     file_name = extract_file_name(file_title)
-    angle = np.int(file_name.split("-")[-1])
-    return angle
+    axis = np.int(file_name.split("-")[-1])
+    return axis
 
 
 def extract_size(path):
@@ -64,7 +74,7 @@ def extract_size(path):
     """
     size = path.split("/")[-2]
     # Sanity check
-    assert size in TRAINING_IMAGE_SIZES or size in TESTING_IMAGE_SIZES
+    assert size in const.TRAINING_IMAGE_SIZES or size in const.TESTING_IMAGE_SIZES
 
     return size
 
@@ -72,9 +82,9 @@ def extract_size(path):
 def extract_distortion_level(path):
     filename = extract_file_name(path)
 
-    if filename in low_distortion_filenames:
+    if filename in const.low_distortion_filenames:
         return "low"
-    elif filename in high_distortion_filenames:
+    elif filename in const.high_distortion_filenames:
         return "high"
     else:
         raise Exception("Image cannot be classified as high or low distortion:", path)

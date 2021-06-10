@@ -52,15 +52,35 @@ high_distortion_filenames = ["2-6-0",
                              "6-6-90",
                              "6-6-135"]
 
-optotypes = ['+blank', '+circle', '+diamond', '+square', '2', '3', '5', '6', '8', '9', 'C', 'C-0',
-           'C-135', 'C-180', 'C-225', 'C-270', 'C-315', 'C-45', 'C-90', 'D', 'E', 'E-0',
-           'E-180', 'E-270', 'E-90', 'F', 'H', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'T', 'V', 'Z',
-           'apple', 'bird', 'cake', 'car', 'circle', 'cow', 'cup', 'duck', 'flat-line',
-           'flat-square', 'frown-line', 'frown-square', 'hand', 'horse', 'house', 'panda',
-           'phone', 'smile-line', 'smile-square', 'square', 'star', 'train', 'tree',
-           'x-blank', 'x-circle', 'x-diamond', 'x-square']
+optotypes = ['+blank', '+circle', '+diamond', '+square', '2', '3', '5', '6', '8', '9', 'C', 'D', 'E', 'F', 'H', 'K',
+             'L', 'N', 'O', 'P', 'R', 'S', 'T', 'V', 'Z', 'apple', 'bird', 'cake', 'car', 'circle', 'cow', 'cup', 'duck',
+             'flat-line', 'flat-square', 'frown-line', 'frown-square', 'hand', 'horse', 'house', 'panda', 'phone',
+             'smile-line', 'smile-square', 'square', 'star', 'train', 'tree', 'x-blank', 'x-circle', 'x-diamond', 'x-square',
+             'grayCircle', 'SregularCircle', 'SgradientCircle', 'MregularCircle', 'MgradientCircle', 'LregularCircle', 'LgradientCircle']
 
-angles = [0, 45, 90, 135]
+axes = [0, 45, 90, 135]
+
+angles_int = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 225, 270, 315]
+angles_str = ["-0", "-45", "-90", "-135", "-180", "-225", "-270", "-315", "-22.5", "-67.5", "-112.5", "-157.5"]
+
+acuity_to_optotypes = {
+    'A': ['cake', 'car', 'duck', 'hand', 'horse', 'house', 'panda', 'phone', 'tree'],
+    'C': ['C-0', 'C-135', 'C-180', 'C-225', 'C-270', 'C-315', 'C-45', 'C-90'],
+    'E': ['E-0', 'E-180', 'E-270', 'E-90'],
+    'ETDRS': ['C', 'D', 'H', 'K', 'N', 'O', 'R', 'S', 'V', 'Z'],
+    'ETL-face': ['flat-line', 'flat-square', 'frown-line', 'frown-square', 'smile-line', 'smile-square'],
+    'ETL-x': ['+blank', '+circle', '+diamond', '+square', 'x-blank', 'x-circle', 'x-diamond', 'x-square'],
+    'HOTV': ['H', 'O', 'T', 'V'],
+    'L': ['apple', 'circle', 'house', 'square'],
+    'NL': ['5', '6', '8', '9'], # TODO 5,6,9
+    'NPV': ['2', '3', '5', '6', '9'],
+    'P': ['apple', 'circle', 'house', 'square', 'star'], # TODO L
+    'SSa': ['C', 'D', 'E', 'F', 'L', 'O', 'P', 'T', 'Z'],
+    'SSl': ['C', 'D', 'E', 'F', 'L', 'O', 'P', 'T', 'Z'],
+    'W': ['bird', 'cow', 'cup', 'house', 'train']
+}
+
+acuities = ['A', 'C', 'E', 'ETDRS', 'ETL-face', 'ETL-x', 'HOTV', 'L', 'NL', 'NPV', 'P', 'SSa', 'SSl', 'Teller', 'W']
 
 imbalanced_classes = ["+blank", "+circle", "+diamond", "+square", "2", "3", "5", "6", "8", "9", "apple", "bird", "cake",
                       "car", "circle", "cow", "cup", "D",
@@ -86,7 +106,7 @@ remote_data_root = "/baldig/bioprojects2/VisualAcuity/"
 local_data_root = "/Users/brookeryan/Developer/BaldiLab/Visual-Acuity/MultipleChoiceTest2/"
 
 # OPTIONS
-DATA_ROOT = local_data_root
+DATA_ROOT = local_project_root
 PROJECT_ROOT = local_project_root
 
 IMAGES_PATH = PROJECT_ROOT + "images/"

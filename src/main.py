@@ -24,7 +24,7 @@ labels = ["+blank", "+circle", "+diamond", "+square", "2", "3", "5", "6", "8", "
 
 def init_wandb(argv, sync_tensorboard=True):
     """
-    Initializes the weightsandbiases config yaml file and run name variables.
+    Initializes the visualization config yaml file and run name variables.
     :param argv: One command-line argument that is just the run name. Optional.
     :param sync_tensorboard: WandB parameter that enables Tensorboard to be tracked.
     :return:
@@ -43,7 +43,7 @@ def log_model_params(model, wandb_config, args):
     """
     NOT USED CURRENTLY
     Extract params of interest about the model (e.g. number of different layer types).
-    Log these and any experiment-level settings to weightsandbiases.
+    Log these and any experiment-level settings to visualization.
     :param model:
     :param wandb_config:
     :param args:

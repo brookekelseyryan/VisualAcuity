@@ -6,8 +6,7 @@ import wandb
 from keras.applications.vgg16 import VGG16
 from tensorflow.keras.callbacks import TensorBoard
 
-from data import dataset as ds
-from preprocessing import constants as const
+from data import constants as const
 from visualization import wandb_utils as wb
 
 

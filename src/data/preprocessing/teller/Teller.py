@@ -7,10 +7,10 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing.image import save_img
 
-from preprocessing.teller import constants as const
-from preprocessing.teller import files as f
-from preprocessing import images as imgs
-from preprocessing import utils
+from data.preprocessing.teller import constants as const
+from data.preprocessing.teller import files as f
+from data.preprocessing import images as imgs
+from data.preprocessing import utils
 
 def is_training_image(path, title):
     """

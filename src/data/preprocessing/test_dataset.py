@@ -1,8 +1,8 @@
 import numpy as np
 from PIL import Image
 
-from preprocessing import constants as const
-from preprocessing import files as f
+from data.preprocessing import constants as const
+from data.preprocessing import files as f
 
 
 def test_labels(dataset, name):

@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing.image import save_img
 
-import constants as const
+from data.preprocessing import constants as const
 import files as f
 import images as imgs
 import utils

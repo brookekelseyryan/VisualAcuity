@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from preprocessing import constants as const
+from data.preprocessing import constants as const
 
 
 def is_low_distortion_file(file_title):

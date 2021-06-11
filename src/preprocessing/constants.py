@@ -58,6 +58,7 @@ optotypes = ['+blank', '+circle', '+diamond', '+square', '2', '3', '5', '6', '8'
              'smile-line', 'smile-square', 'square', 'star', 'train', 'tree', 'x-blank', 'x-circle', 'x-diamond', 'x-square',
              'grayCircle', 'SregularCircle', 'SgradientCircle', 'MregularCircle', 'MgradientCircle', 'LregularCircle', 'LgradientCircle']
 
+
 axes = [0, 45, 90, 135]
 
 angles_int = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 225, 270, 315]
@@ -106,7 +107,7 @@ remote_data_root = "/baldig/bioprojects2/VisualAcuity/"
 local_data_root = "/Users/brookeryan/Developer/BaldiLab/Visual-Acuity/MultipleChoiceTest2/"
 
 # OPTIONS
-DATA_ROOT = local_project_root
+DATA_ROOT = local_data_root
 PROJECT_ROOT = local_project_root
 
 IMAGES_PATH = PROJECT_ROOT + "images/"
@@ -115,3 +116,5 @@ TESTING_PATH = PROJECT_ROOT + "images/testing/"
 
 TRAINING_SIZE = 8480
 TESTING_SIZE = 11610
+
+label_path = "/Users/brookeryan/Developer/BaldiLab/Visual-Acuity/np_data/"

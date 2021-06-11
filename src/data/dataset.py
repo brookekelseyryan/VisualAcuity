@@ -1,14 +1,37 @@
 import os
-
 import numpy as np
+import pandas as pd
+from tqdm import tqdm
 from tensorflow.keras import preprocessing as p
 
 from preprocessing import files as f
 from preprocessing import constants as const
 
 
+class Label:
+    def __init__(self, array, name, numeric=False):
+        self.name = name
+        self.array = array
+        self.numeric_equals_array = numeric
+
+    def convert(self):
+        numeric_array, _ = pd.factorize(self.array)
+        return numeric_array
+
+    def save(self, path):
+        array_path = path + "/" + self.name
+        np.save(file=array_path, arr=self.array)
+
+        if not self.numeric_equals_array:
+            numeric_array_path = path + "/" + self.name + "_numeric"
+            np.save(file=numeric_array_path, arr=self.convert())
+
+    def append(self, i, value):
+        self.array[i] = value
+
+
 class Dataset:
-    def __init__(self, path, name, height, width, batch_size, include_augmented=False):
+    def __init__(self, path, name, height, width, channels, include_augmented=False):
         # Path to where this multiplechoice_processed_data lives. This should be in a pre-processed form of images/testing/, etc.
         self.path = path
 
@@ -17,25 +40,26 @@ class Dataset:
 
         self.height = height
         self.width = width
-
-        self.batch_size = batch_size
+        self.channels = channels
 
         self.num_total_images = 0
         self.num_augmented_images = 0
         self.__get_size_of_dataset()
 
-        self.images = np.zeros((self.num_total_images, self.height, self.width, 3), dtype=np.float64)
+        self.images = Label(name="images", array=np.zeros((self.num_total_images, self.height, self.width, self.channels), dtype=np.uint8), numeric=True)
 
-        self.acuities = np.zeros(shape=(self.num_total_images,), dtype=object)  # SSa, SSl, HOTV, etc.
-        self.angles = np.zeros(shape=(self.num_total_images,), dtype=float)  # this is for optotypes like C-0
-        self.augmented = np.zeros(shape=(self.num_total_images,), dtype=object)  # Name or 'None'
-        self.character = np.zeros(shape=(self.num_total_images,),
-                                  dtype=object)  # alpha, num, dingbat, teller (used for determining literacy stuff)
-        self.distortions = np.zeros(shape=(self.num_total_images,), dtype=object)  # low or high
-        self.optotypes = np.zeros(shape=(self.num_total_images,), dtype=object)  # cake, C, D, duck, etc.
-        self.sizes = np.zeros(shape=(self.num_total_images,), dtype=object)  # S, M, or L
+        self.acuities = Label(name="acuities", array=np.zeros(shape=(self.num_total_images,), dtype=object))  # SSa, SSl, HOTV, etc.
+        self.angles = Label(name="angles", array=np.zeros(shape=(self.num_total_images,), dtype=float), numeric=True)  # this is for optotypes like C-0
+        self.augmented = Label(name="augmented", array=np.zeros(shape=(self.num_total_images,), dtype=object))  # Name or 'None'
+        self.character = Label(name="character", array=np.zeros(shape=(self.num_total_images,), dtype=object))  # alpha, num, dingbat, teller
+        self.distortions = Label(name="distortions", array=np.zeros(shape=(self.num_total_images,), dtype=object))  # low or high
+        self.optotypes = Label(name="optotypes", array=np.zeros(shape=(self.num_total_images,), dtype=object))  # cake, C, D, duck, etc.
+        self.sizes = Label(name="sizes", array=np.zeros(shape=(self.num_total_images,), dtype=object))  # S, M, or L
 
         self.__process_labels()
+
+        for label in tqdm([self.images, self.acuities, self.angles, self.augmented, self.character, self.distortions, self.optotypes, self.sizes]):
+            label.save(const.label_path+self.name)
 
     def __get_size_of_dataset(self):
         for root, dirs, files in os.walk(self.path):
@@ -63,35 +87,28 @@ class Dataset:
 
         i = 0
 
-        for root, dirs, files in os.walk(self.path):
+        for root, dirs, files in tqdm(os.walk(self.path), total=140):
             for file in files:
                 if file.endswith(".png"):
                     abs_path = os.path.join(root, file)
 
-                    self.images[i] = p.image.img_to_array(p.image.load_img(abs_path))
+                    self.images.append(i, p.image.img_to_array(p.image.load_img(abs_path)))
 
                     acuity, optotype, angle, character = extract_acuity_optotype_angle_character(abs_path)
-                    self.acuities[i] = acuity
-                    self.angles[i] = angle
-                    self.optotypes[i] = optotype
-                    self.character[i] = character
+                    self.acuities.append(i, acuity)
+                    self.angles.append(i, angle)
+                    self.optotypes.append(i, optotype)
+                    self.character.append(i, character)
 
                     distortion, size, augmentation = extract_distortion_size_augmentation(file.title())
 
-                    self.augmented[i] = augmentation
-                    self.distortions[i] = distortion
-                    self.sizes[i] = size
+                    self.augmented.append(i, augmentation)
+                    self.distortions.append(i, distortion)
+                    self.sizes.append(i, size)
 
                     i += 1
 
         print("Done processing labels.")
-
-    def get_tf_dataset(self, shuffle=True):
-        """
-        Utility method, simply calls the image_dataset_from_directory method from tensorflow.
-        """
-        return p.image_dataset_from_directory(self.path, shuffle=shuffle, batch_size=self.batch_size,
-                                              image_size=(self.height, self.width))
 
 
 def extract_size(title):

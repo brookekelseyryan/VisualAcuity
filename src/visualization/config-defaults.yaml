@@ -6,7 +6,6 @@ project:
   value: "Visual_Acuity"
 
 
-
 ###################
 # Training Params #
 ###################
@@ -16,6 +15,11 @@ epochs:
 batch_size:
   desc: Size of each mini-batch
   value: 32
+
+
+################
+# Model Params #
+################
 optimizer:
   value: "adam"
 weights:
@@ -23,19 +27,20 @@ weights:
 metrics:
   value: "accuracy"
 loss:
-  value: "categorical_crossentropy"
-
+  value: "sparse_categorical_crossentropy"
+activation:
+  value: 'softmax'
 
 
 ##################
 # Dataset Params #
 ##################
-image_dms:
-  desc: Height of images
+height:
+  desc: height of images
   value: 400
-image_width:
-  desc: Width of images
+width:
+  desc: width of images
   value: 400
-color_channels:
-  desc: RGB
+channels:
+  desc: number of color channels
   value: 3

@@ -4,8 +4,8 @@ import pandas as pd
 from tqdm import tqdm
 from tensorflow.keras import preprocessing as p
 
-from data.preprocessing import files as f
-from data.preprocessing import constants as const
+from preprocessing import files as f
+from preprocessing import constants as const
 
 
 class Label:

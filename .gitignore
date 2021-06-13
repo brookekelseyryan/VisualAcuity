@@ -16,7 +16,7 @@ wandb/
 /multiplechoice_processed_data/
 
 src/data/.ipynb_checkpoints/
-/src/visualization/wandb_logs/
+/src/config/wandb_logs/
 /np_data/
 
 dev_utils/

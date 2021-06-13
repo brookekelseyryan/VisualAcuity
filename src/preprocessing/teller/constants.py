@@ -1,4 +1,4 @@
-from data.preprocessing import constants as const
+from preprocessing import constants as const
 
 low_distortion_filenames = const.low_distortion_filenames
 

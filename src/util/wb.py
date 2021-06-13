@@ -9,11 +9,32 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
 
+def init_wandb(config_path, argv=None, sync_tensorboard=True):
+    """
+    Initializes the config config yaml file and run name variables.
+    :param argv: One command-line argument that is just the run name. Optional.
+    :param sync_tensorboard: WandB parameter that enables Tensorboard to be tracked.
+    :return:
+    """
+    if argv is None:
+        argv = []
+
+    print("Initializing wandb config from", config_path)
+    wandb.init(config=config_path, project="Visual_Acuity", sync_tensorboard=sync_tensorboard)
+
+    run_name = ""
+
+    if len(argv) > 1:
+        run_name = argv[1]
+
+    wandb.run.name = run_name + datetime.now().strftime(" %H:%M:%S, %m/%d/%Y, id= ") + wandb.run.id
+
+
 def log_model_params(model, wandb_config, args):
     """
     NOT USED CURRENTLY
     Extract params of interest about the model (e.g. number of different layer types).
-    Log these and any experiment-level settings to visualization.
+    Log these and any experiment-level settings to config.
     :param model:
     :param wandb_config:
     :param args:
@@ -27,23 +48,6 @@ def log_model_params(model, wandb_config, args):
             num_conv_layers += 1
         elif layer_type == "dense":
             num_fc_layers += 1
-
-
-def init_wandb(argv, sync_tensorboard=True):
-    """
-    Initializes the visualization config yaml file and run name variables.
-    :param argv: One command-line argument that is just the run name. Optional.
-    :param sync_tensorboard: WandB parameter that enables Tensorboard to be tracked.
-    :return:
-    """
-    wandb.init(config="/home/brooker/VisualAcuity/src/visualization/config-defaults.yaml", project="Visual_Acuity", sync_tensorboard=sync_tensorboard)
-
-    run_name = ""
-
-    if len(argv) > 1:
-        run_name = argv[1]
-
-    wandb.run.name = run_name + datetime.now().strftime(" %H:%M:%S, %m/%d/%Y, id= ") + wandb.run.id
 
 
 class WandbClassificationCallback(WandbCallback):
@@ -67,7 +71,7 @@ class WandbClassificationCallback(WandbCallback):
             for calculating gradients - this is mandatory if `log_gradients` is `True`.
         validate_data: (tuple) Same format (X,y) as passed to model.fit.  A set of data
             for wandb to visualize.  If this is set, every epoch, wandb will
-            make a small number of predictions and save the results for later visualization.
+            make a small number of predictions and save the results for later config.
         generator (generator): a generator that returns validation data for wandb to visualize.  This
             generator should return tuples (X,y).  Either validate_data or generator should
             be set for wandb to visualize specific data examples.
@@ -78,9 +82,9 @@ class WandbClassificationCallback(WandbCallback):
             multiclass classifier.  If you are making a binary classifier you can pass in
             a list of two labels ["label for false", "label for true"].  If validate_data
             and generator are both false, this won't do anything.
-        predictions (int): the number of predictions to make for visualization each epoch, max
+        predictions (int): the number of predictions to make for config each epoch, max
             is 100.
-        input_type (string): type of the model input to help visualization. can be one of:
+        input_type (string): type of the model input to help config. can be one of:
             ("image", "images", "segmentation_mask").
         output_type (string): type of the model output to help visualziation. can be one of:
             ("image", "images", "segmentation_mask").
@@ -213,8 +217,8 @@ class WandbClassificationCallback(WandbCallback):
     def _log_confusion_matrix(self):
         x_val = self.validation_data[0]
         y_val = self.validation_data[1]
-        y_val = np.argmax(y_val, axis=1)
-        y_pred = np.argmax(self.model.predict(x_val), axis=1)
+        y_val = np.argmax(y_val)
+        y_pred = np.argmax(self.model.predict(x_val))
 
         confmatrix = confusion_matrix(y_pred, y_val, labels=range(len(self.labels)))
         confdiag = np.eye(len(confmatrix)) * confmatrix

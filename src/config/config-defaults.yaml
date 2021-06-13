@@ -11,11 +11,12 @@ project:
 ###################
 epochs:
   desc: Number of epochs to train over
-  value: 1
+  value: 15
 batch_size:
   desc: Size of each mini-batch
   value: 32
-
+validation_split:
+  value: 0.20
 
 ################
 # Model Params #
@@ -44,3 +45,5 @@ width:
 channels:
   desc: number of color channels
   value: 3
+num_optotypes:
+  value: 59

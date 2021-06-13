@@ -10,4 +10,5 @@ rsync -vr \
 --exclude multiplechoice_processed_data/* \
 --exclude tellerImages/* \
 --exclude images/* \
+--exclude np_data/* \
 /Users/brookeryan/Developer/BaldiLab/Visual-Acuity/ brooker@arcus-17.ics.uci.edu:/home/brooker/VisualAcuity/

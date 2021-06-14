@@ -1,0 +1,16 @@
+################
+# Arcus Paths  #
+################
+project_root: "/home/brooker/VisualAcuity/"
+np_training: "/home/brooker/VisualAcuity/np_data/Training/"
+np_testing: "/home/brooker/VisualAcuity/np_data/Testing/"
+wandb_config_path: "/home/brooker/VisualAcuity/src/config/config-defaults.yaml"
+
+
+########
+# Cuda #
+########
+cuda: True
+CUDA_DEVICE_ORDER: "PCI_BUS_ID"
+CUDA_VISIBLE_DEVICES: "2"
+

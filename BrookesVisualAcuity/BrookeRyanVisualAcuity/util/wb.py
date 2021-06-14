@@ -7,26 +7,27 @@ from datetime import datetime
 from sklearn.metrics import confusion_matrix
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
-import os
 
 
-def init_wandb(run_name, params={}, yaml="/home/brooker/VisualAcuity/src/config/config-defaults.yaml", reinit=True, sync_tensorboard=True):
+def init_wandb(config_path, argv=None, sync_tensorboard=True):
     """
     Initializes the config config yaml file and run name variables.
-    :param config_path: path to config-defaults.yaml
-    :param run_name:
     :param argv: One command-line argument that is just the run name. Optional.
     :param sync_tensorboard: WandB parameter that enables Tensorboard to be tracked.
     :return:
     """
-    print("Initializing wandb run", run_name, "with config_path", yaml, "and additional params:", params)
+    if argv is None:
+        argv = []
 
-    run = wandb.init(allow_val_change=True, reinit=reinit, config=yaml, project="Visual_Acuity", sync_tensorboard=sync_tensorboard, group=os.environ["WANDB_RUN_GROUP"])
-    wandb.config.update(params, allow_val_change=True)
+    print("Initializing wandb config from", config_path)
+    wandb.init(config=config_path, project="Visual_Acuity", sync_tensorboard=sync_tensorboard)
 
-    wandb.run.name = run_name + wandb.run.id
+    run_name = ""
 
-    return run
+    if len(argv) > 1:
+        run_name = argv[1]
+
+    wandb.run.name = run_name + datetime.now().strftime(" %H:%M:%S, %m/%d/%Y, id= ") + wandb.run.id
 
 
 def log_model_params(model, wandb_config, args):

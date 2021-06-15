@@ -102,6 +102,12 @@ class WWandbCallback(WandbCallback):
             {"High Distortion Final Predictions": self.log_images(num_images=self.predictions, name="test")},
             commit=False)
 
+        self._init_validation_gen()
+        self._log_validation_table()
+
+        self._init_testing_gen()
+        self._log_testing_table()
+
     def on_epoch_end(self, epoch, logs={}):
         """
         Had to change the base method here as well
@@ -111,28 +117,6 @@ class WWandbCallback(WandbCallback):
 
         if self.log_gradients:
             wandb.log(self._log_gradients(), commit=False)
-
-        if self.input_type in (
-                "image",
-                "images",
-                "segmentation_mask",
-        ) or self.output_type in ("image", "images", "segmentation_mask"):
-            if self.generator:
-                self.validation_data = next(self.generator)
-            if self.validation_data is None:
-                wandb.termwarn(
-                    "No validation_data set, pass a generator to the callback."
-                )
-            elif self.validation_data and len(self.validation_data) > 0:
-                wandb.log(
-                    {"Low Distortion predictions during training": self.log_images(num_images=self.predictions,
-                                                                                   name="validation")},
-                    commit=False)
-                if self.testing_data and len(self.testing_data) > 0:
-                    wandb.log(
-                        {"High Distortion predictions during training": self.log_images(num_images=self.predictions,
-                                                                                        name="test")},
-                        commit=False)
 
         wandb.log({"epoch": epoch}, commit=False)
         wandb.log(logs, commit=True)
@@ -233,11 +217,11 @@ class WWandbCallback(WandbCallback):
                     testing_data = self.testing_data
                     self.testing_data_logger = ValidationDataLogger(
                         inputs=testing_data[0],
-                        targets=self.testing_labels,
+                        targets=testing_data[1],
                         indexes=None,
                         validation_row_processor=None,
                         prediction_row_processor=None,
-                        class_labels=None,
+                        class_labels=self.labels,
                         infer_missing_processors=self.infer_missing_processors)
             except Exception as e:
                 wandb.termwarn(
@@ -255,11 +239,11 @@ class WWandbCallback(WandbCallback):
                     validation_data = self.validation_data
                     self.validation_data_logger = ValidationDataLogger(
                         inputs=validation_data[0],
-                        targets=self.validation_labels,
+                        targets=validation_data[1],
                         indexes=None,
                         validation_row_processor=None,
                         prediction_row_processor=None,
-                        class_labels=None,
+                        class_labels=self.labels,
                         infer_missing_processors=self.infer_missing_processors)
             except Exception as e:
                 wandb.termwarn(
@@ -291,17 +275,20 @@ class WWandbCallback(WandbCallback):
             indices = range(validation_length)
             print("non random indices", indices)
 
-        test_data = []
-        test_output = []
-        for i in indices:
-            test_example = X[i]
-            test_data.append(test_example)
-            test_output.append(labels[i])
-            print("labels[{i}]={l}".format(i=i, l=labels[i]))
-            print("test_example=", test_example)
-            assert np.array_equal(test_data[i], X[i])
-        print("test_data", test_data)
-        print("test_data_num_unique:", np.unique(test_data).shape)
+        test_data = np.take(X, indices, axis=0)
+        test_output = np.take(labels, indices)
+
+        print("test data")
+        print(test_data.shape)
+        print(test_data)
+
+        print("test output")
+        print(test_output.shape)
+        print(test_output)
+
+        test_data = test_data
+        test_output = test_output.tolist()
+
 
         if self.model.stateful:
             print("stateful model")

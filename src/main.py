@@ -54,6 +54,5 @@ if __name__ == '__main__':
         model = m.Model(training_dataset, validation_dataset, testing_dataset, app, arch)
         model.train()
         model.evaluate()
-        model.predict()
         model.finish()
         del model

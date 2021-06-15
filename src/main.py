@@ -7,6 +7,13 @@ from sklearn.model_selection import train_test_split
 # Imports
 from tensorflow.keras.callbacks import TensorBoard
 
+import keras.applications.vgg16
+import keras.applications.vgg19
+import keras.applications.resnet
+import keras.applications.xception
+import keras.applications.inception_resnet_v2
+import keras.applications.nasnet
+
 import util.wb
 import util.wb
 import wandb
@@ -24,8 +31,8 @@ if __name__ == '__main__':
 
     CONFIG_PATH = "./config/arcus.yaml"
 
-    models = ["xception_frozen_weights",
-              "resnet152_frozen_weights", "inceptionresnetv2_frozen_weights"]
+    applications = [keras.applications.vgg16, keras.applications.vgg19, keras.applications.resnet, keras.applications.xception, keras.applications.inception_resnet_v2, keras.applications.nasnet]
+    architectures = [keras.applications.vgg16.VGG16, keras.applications.vgg19.VGG19, keras.applications.resnet.ResNet152, keras.applications.xception.Xception, keras.applications.inception_resnet_v2.InceptionResNetV2, keras.applications.nasnet.NASNetLarge]
 
     print("Initiating...\n")
 
@@ -43,9 +50,10 @@ if __name__ == '__main__':
 
     training_dataset, validation_dataset, testing_dataset = ds.load_train_validate_test_datasets(config)
 
-    model = m.Model(training_dataset, validation_dataset, testing_dataset)
-
-    for m in models:
-        model.run(m)
+    for app, arch in zip(applications, architectures):
+        model = m.Model(training_dataset, validation_dataset, testing_dataset, app, arch)
+        model.train()
         model.evaluate()
-        model.clear()
+        model.predict()
+        model.finish()
+        del model

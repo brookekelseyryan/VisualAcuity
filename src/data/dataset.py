@@ -1,7 +1,7 @@
 import numpy as np
 
 from sklearn import model_selection
-
+import keras.applications.imagenet_utils
 import wandb
 
 
@@ -25,7 +25,7 @@ class Dataset:
         print("optotypes =", self.optotypes)
         print("sizes = ", self.sizes)
 
-        wandb.log({self.name + " examples": [wandb.Image(image) for image in self.images[:50]]})
+        wandb.log({self.name + " examples": [wandb.Image(image, caption=label) for image, label in zip(self.images[:50], self.optotypes[:50])]})
 
     @staticmethod
     def from_path(name, path):
@@ -55,6 +55,8 @@ class Dataset:
         dataset.sizes = np.load(path + "/sizes.npy", allow_pickle=True)
         dataset.sizes_numeric = np.load(path + "/sizes_numeric.npy")
 
+        dataset.optotype_labels = dataset._get_labels()
+
         return dataset
 
     @staticmethod
@@ -83,11 +85,31 @@ class Dataset:
 
         dataset.optotypes = optotypes
         dataset.optotypes_numeric = optotypes_numeric
+        dataset.optotypes_labels = dataset._get_labels()
 
         dataset.sizes = sizes
         dataset.sizes_numeric = sizes_numeric
 
         return dataset
+
+    def preprocess_input(self, application):
+        print("Preprocessing images...")
+        self.images_processed = keras.applications.imagenet_utils.preprocess_input(self.images, data_format='channels_last', mode='tf')
+
+    def _get_labels(self):
+        o_n = self.optotypes_numeric
+        labels = []
+
+        _, unique_indices = np.unique(self.optotypes_numeric, return_index=True)
+        thing = np.take(self.optotypes, unique_indices)
+
+        for i in range(59):
+            labels.insert(i, thing[i])
+            # labels.append(self.optotypes[np.argmin(np.where(o_n == i))])
+            print("labels[", i, "]=", thing[i])
+
+        print("labels", labels)
+        return labels
 
 
 def train_validate_split(training_dataset, split):

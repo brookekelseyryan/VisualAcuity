@@ -145,9 +145,9 @@ if __name__ == '__main__':
 
     clear_previous_dirs()
 
-    print("#################################")
+    print("######################################################")
     print("Beginning multiplechoice_processed_data processing...")
-    print("#################################\n")
+    print("######################################################\n")
 
     process()
 

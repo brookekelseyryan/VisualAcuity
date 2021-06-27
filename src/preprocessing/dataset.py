@@ -73,6 +73,7 @@ class Dataset:
                     else:
                         self.num_total_images += 1
 
+        self.num_total_images += 1
         print(self.name, "Dataset contains", self.num_total_images, "total images.")
         print(self.name, "Dataset contains", self.num_augmented_images, "augmented images.")
 
@@ -90,23 +91,25 @@ class Dataset:
         for root, dirs, files in tqdm(os.walk(self.path), total=140):
             for file in files:
                 if file.endswith(".png"):
-                    abs_path = os.path.join(root, file)
+                    if (is_augmented_image(file.title()) and self.__include_augmented) or not is_augmented_image(file.title()):
+                        print("i=", i)
+                        abs_path = os.path.join(root, file)
 
-                    self.images.append(i, p.image.img_to_array(p.image.load_img(abs_path)))
+                        self.images.append(i, p.image.img_to_array(p.image.load_img(abs_path)))
 
-                    acuity, optotype, angle, character = extract_acuity_optotype_angle_character(abs_path)
-                    self.acuities.append(i, acuity)
-                    self.angles.append(i, angle)
-                    self.optotypes.append(i, optotype)
-                    self.character.append(i, character)
+                        acuity, optotype, angle, character = extract_acuity_optotype_angle_character(abs_path)
+                        self.acuities.append(i, acuity)
+                        self.angles.append(i, angle)
+                        self.optotypes.append(i, optotype)
+                        self.character.append(i, character)
 
-                    distortion, size, augmentation = extract_distortion_size_augmentation(file.title())
+                        distortion, size, augmentation = extract_distortion_size_augmentation(file.title())
 
-                    self.augmented.append(i, augmentation)
-                    self.distortions.append(i, distortion)
-                    self.sizes.append(i, size)
+                        self.augmented.append(i, augmentation)
+                        self.distortions.append(i, distortion)
+                        self.sizes.append(i, size)
 
-                    i += 1
+                        i += 1
 
         print("Done processing labels.")
 

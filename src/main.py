@@ -12,6 +12,7 @@ import keras.applications.vgg19
 import keras.applications.resnet
 import keras.applications.xception
 import keras.applications.inception_resnet_v2
+import keras.applications.inception_v3
 import keras.applications.nasnet
 
 import util.wb
@@ -31,8 +32,8 @@ if __name__ == '__main__':
 
     CONFIG_PATH = "./config/arcus.yaml"
 
-    applications = [keras.applications.vgg16, keras.applications.vgg19, keras.applications.resnet, keras.applications.xception, keras.applications.inception_resnet_v2, keras.applications.nasnet]
-    architectures = [keras.applications.vgg16.VGG16, keras.applications.vgg19.VGG19, keras.applications.resnet.ResNet152, keras.applications.xception.Xception, keras.applications.inception_resnet_v2.InceptionResNetV2, keras.applications.nasnet.NASNetLarge]
+    applications = [keras.applications.vgg16, keras.applications.vgg19, keras.applications.resnet, keras.applications.xception, keras.applications.inception_resnet_v2, keras.applications.inception_v3]
+    architectures = [keras.applications.vgg16.VGG16, keras.applications.vgg19.VGG19, keras.applications.resnet.ResNet152, keras.applications.xception.Xception, keras.applications.inception_resnet_v2.InceptionResNetV2, keras.applications.inception_v3.InceptionV3]
 
     print("Initiating...\n")
 

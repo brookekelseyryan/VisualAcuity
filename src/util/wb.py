@@ -21,7 +21,7 @@ def init_wandb(run_name, params={}, yaml="/home/brooker/VisualAcuity/src/config/
     """
     print("Initializing wandb run", run_name, "with config_path", yaml, "and additional params:", params)
 
-    run = wandb.init(allow_val_change=True, reinit=reinit, config=yaml, project="Visual_Acuity",
+    run = wandb.init(allow_val_change=True, reinit=reinit, config=yaml, project="VisualAcuity",
                      sync_tensorboard=sync_tensorboard, group=os.environ["WANDB_RUN_GROUP"])
     wandb.config.update(params, allow_val_change=True)
 
@@ -242,7 +242,7 @@ class WWandbCallback(WandbCallback):
                         targets=validation_data[1],
                         indexes=None,
                         validation_row_processor=None,
-                        prediction_row_processor=None,
+                        prediction_row_processor=lambda ndx, row: {"output": np.argmax(row["output"])},
                         class_labels=self.labels,
                         infer_missing_processors=self.infer_missing_processors)
             except Exception as e:

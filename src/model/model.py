@@ -20,7 +20,7 @@ class Model:
         Allows re-use of datasets and callbacks throughout runs.
         """
 
-        self.name = application.__name__
+        self.name = model.__name__
         self.application = application
         self.wandb_run = util.wb.init_wandb(params=config, run_name=self.name)
         self.model = frozen_weights(model(include_top=False, weights=wandb.config.weights,
@@ -45,10 +45,10 @@ class Model:
                                                  testing_data=(self.testing.images_processed, self.testing.optotypes_numeric),
                                                  testing_labels=self.testing.optotypes,
                                                  validation_labels=self.validation.optotypes,
-                                                 predictions=10,
+                                                 predictions=15,
                                                  input_type="image",
                                                  output_type="label",
-                                                 log_evaluation=False,
+                                                 log_evaluation=True,
                                                  labels=self.validation.optotypes_labels,
                                                  training_data=(self.training.images_processed, self.training.optotypes_numeric),
                                                  validation_data=(self.validation.images_processed, self.validation.optotypes_numeric))]
@@ -88,7 +88,6 @@ class Model:
 
     def predict(self):
         predictions = self.model.predict(x=self.testing.images_processed, callbacks=self.callbacks)
-        self.wandb_run.log({"Model Predictions": predictions})
 
 
 def frozen_weights(model):

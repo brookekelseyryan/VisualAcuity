@@ -7,39 +7,49 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing.image import save_img
 
-from preprocessing.teller import constants as const
-from preprocessing.teller import files as f
-from preprocessing import images as imgs
-from preprocessing import utils
+from preprocessing import constants as const
+import files as f
+import images as imgs
+import utils
+
 
 def is_training_image(path, title):
     """
     Large images with low distortion levels are training images.
     """
+    size = f.extract_size(path)
     filename = f.extract_file_name(title)
 
-    if filename in const.low_distortion_filenames:
+    if size in const.TESTING_IMAGE_SIZES:
+        return False
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.low_distortion_filenames:
         return True
-    elif filename in const.high_distortion_filenames:
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.high_distortion_filenames:
         return False
     else:
-        raise Exception("Image cannot be classified as testing or training image:", path, "filename:", filename)
+        raise Exception("Image cannot be classified as testing or training image:", path, "filename:", filename,
+                        "size:", size)
 
 
 def is_testing_image(path, title):
     """
     Small or Medium image, or a Large image with high distortion level.
     """
+    size = f.extract_size(path)
     filename = f.extract_file_name(title)
 
-    if filename in const.low_distortion_filenames:
+    if size in const.TESTING_IMAGE_SIZES:
+        return True
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.low_distortion_filenames:
         return False
-    elif filename in const.high_distortion_filenames:
+    elif size in const.TRAINING_IMAGE_SIZES and filename in const.high_distortion_filenames:
         return True
     else:
-        raise Exception("Image cannot be classified as testing or training image:", path, "filename:", filename)
+        raise Exception("Image cannot be classified as testing or training image:", path, "filename:", filename,
+                        "size:", size)
 
-def copy_to_dir(abs_path, file_title, training, file_format='.png', data_augmentation=False):
+
+def copy_to_dir(abs_path, file_title, training, file_format='.png', data_augmentation=True):
     if training:
         path = const.TRAINING_PATH
     else:
@@ -49,11 +59,10 @@ def copy_to_dir(abs_path, file_title, training, file_format='.png', data_augment
     image_array = np.asarray(image, dtype=np.float64) / 255
 
     optotype = f.extract_optotype(abs_path)
-    acuity = f.extract_acuity()
+    acuity = f.extract_acuity(abs_path)
     size = f.extract_size(abs_path)
-    angle = f.extract_angle(abs_path)
 
-    dest_dir = os.path.join(path, acuity + "_" + f.make_file_name(optotype, angle) + "/")
+    dest_dir = os.path.join(path, acuity + "_" + optotype + "/")        # example: /images/testing/SSa_C or /images/testing/SSl_C
     utils.make_dir(dest_dir)
 
     file_name = f.extract_file_name(file_title) + "_" + size
@@ -71,7 +80,7 @@ def copy_to_dir(abs_path, file_title, training, file_format='.png', data_augment
         print("Saved", path)
 
 
-def check_previous_dirs():
+def clear_previous_dirs():
     print("#################################")
     print("Clearing previous directories...")
     print("#################################\n")
@@ -105,14 +114,14 @@ def log_size_of_dirs():
 
 def process():
     """
-    Processes images from Teller dir to images/ where they will be used as a data.
+    Processes images from MultipleChoice file to images/ where they will be used as a data.
     """
     for root, dirs, files in os.walk(const.DATA_ROOT):
         for file in files:
             if file.endswith(".png") or file.endswith(".tif"):
                 abs_path = os.path.join(root, file)
 
-                if f.is_icon(abs_path):
+                if f.is_icon(file):
                     # Right now, just don't do anything for icons
                     pass
 
@@ -125,20 +134,29 @@ def process():
                 else:
                     print("Unable to determine what {x} is".format(x=file))
 
-
+########################
+# Random notes from Tiffany 6/27/21
+# - QUESTION: Why are the results of on-screen tests worse than the paper ones
+# - physical disability (some patients can't answer yes or no)
+# - literacy
+# -
+########################
 ########
 # Main #
 ########
+"""
+This is the main method for preprocessing into the training/ testing set when it consisted of 64 Optotypes to test 
+"""
 if __name__ == '__main__':
     print("Current directory: ", os.getcwd())
     print("Data root: ", const.DATA_ROOT)
     print("Project root: ", const.PROJECT_ROOT, "\n")
 
-    check_previous_dirs()
+    clear_previous_dirs()
 
-    print("####################################")
-    print("Beginning Teller data processing...")
-    print("####################################\n")
+    print("######################################################")
+    print("Beginning multiplechoice_processed_data processing...")
+    print("######################################################\n")
 
     process()
 
